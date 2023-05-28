@@ -1,27 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import Profile from "@/components/Profile";
 
 const ProfilePage = () => {
-  const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("id");
 
   const [myPosts, setMyPosts] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch(`/api/users/${session?.user.id}/posts`);
+      const response = await fetch(`/api/users/${userId}/posts`);
       const data = await response.json();
 
       setMyPosts(data);
     };
 
-    if (session?.user.id) fetchPosts();
-  }, [session?.user.id]);
+    if (userId) fetchPosts();
+  }, [userId]);
 
   const handleEdit = (post) => {
     router.push(`/update-prompt?id=${post._id}`);
